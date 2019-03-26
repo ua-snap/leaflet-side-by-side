@@ -107,10 +107,10 @@ L.Control.SideBySide = L.Control.extend({
     if (!this._map) {
       return this
     }
-    this.leftLayers.forEach(layer => {
+    this.leftLayers.forEach(function(layer) {
       removeClip(layer)
     })
-    this.rightLayers.forEach(layer => {
+    this.rightLayers.forEach(function(layer) {
       removeClip(layer)
     })
     this._removeEvents()
@@ -144,13 +144,13 @@ L.Control.SideBySide = L.Control.extend({
     this.fire('dividermove', {x: dividerX})
     var clipLeft = 'rect(' + [nw.y, clipX, se.y, nw.x].join('px,') + 'px)'
     var clipRight = 'rect(' + [nw.y, se.x, se.y, clipX].join('px,') + 'px)'
-    this._leftLayers.forEach(layer => {
+    this._leftLayers.forEach(function(layer) {
       clipContainer(layer, clipLeft)
     })
-    this._rightLayers.forEach(layer => {
+    this._rightLayers.forEach(function(layer) {
       clipContainer(layer, clipRight)
     })
-    this._bothLayers.forEach(layer => {
+    this._bothLayers.forEach(function(layer) {
       removeClip(layer)
     })
   },
@@ -164,10 +164,10 @@ L.Control.SideBySide = L.Control.extend({
     this._bothLayers = []
     // uniqueLeftLayers = []
     if (this._leftLayers) {
-      this._leftLayers.forEach((layer, index) => {
+      this._leftLayers.forEach(function(layer, index) {
         if (layer) {
           if (this._rightLayers) {
-            this._rightLayers.forEach(rightLayer => {
+            this._rightLayers.forEach(function(rightLayer) {
               if (rightLayer && layer._leaflet_id == rightLayer._leaflet_id) {
                 this._bothLayers.push(layer)
               }
