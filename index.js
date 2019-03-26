@@ -1,4 +1,6 @@
-var L = require('leaflet')
+//  May need to add in again unless it works
+//  differently when sucked in through GH?
+//  var L = require('leaflet')
 require('./layout.css')
 require('./range.css')
 
@@ -47,6 +49,19 @@ function asArray (arg) {
 
 function noop () {}
 
+function removeClip (layer) {
+  clipContainer(layer, '')
+}
+
+var clipContainer = function(layer, clip) {
+  if (layer) {
+    container = layer.getContainer()
+    if (container) {
+      container.style.clip = clip
+    }
+  }
+}
+
 L.Control.SideBySide = L.Control.extend({
   options: {
     thumbSize: 42,
@@ -92,12 +107,12 @@ L.Control.SideBySide = L.Control.extend({
     if (!this._map) {
       return this
     }
-    if (this._leftLayer) {
-      this._leftLayer.getContainer().style.clip = ''
-    }
-    if (this._rightLayer) {
-      this._rightLayer.getContainer().style.clip = ''
-    }
+    this.leftLayers.forEach(layer => {
+      removeClip(layer)
+    })
+    this.rightLayers.forEach(layer => {
+      removeClip(layer)
+    })
     this._removeEvents()
     L.DomUtil.remove(this._container)
 
@@ -129,38 +144,37 @@ L.Control.SideBySide = L.Control.extend({
     this.fire('dividermove', {x: dividerX})
     var clipLeft = 'rect(' + [nw.y, clipX, se.y, nw.x].join('px,') + 'px)'
     var clipRight = 'rect(' + [nw.y, se.x, se.y, clipX].join('px,') + 'px)'
-    if (this._leftLayer) {
-      this._leftLayer.getContainer().style.clip = clipLeft
-    }
-    if (this._rightLayer) {
-      this._rightLayer.getContainer().style.clip = clipRight
-    }
+    this._leftLayers.forEach(layer => {
+      clipContainer(layer, clipLeft)
+    })
+    this._rightLayers.forEach(layer => {
+      clipContainer(layer, clipRight)
+    })
+    this._bothLayers.forEach(layer => {
+      removeClip(layer)
+    })
   },
 
   _updateLayers: function () {
     if (!this._map) {
       return this
     }
-    var prevLeft = this._leftLayer
-    var prevRight = this._rightLayer
-    this._leftLayer = this._rightLayer = null
-    this._leftLayers.forEach(function (layer) {
-      if (this._map.hasLayer(layer)) {
-        this._leftLayer = layer
-      }
-    }, this)
-    this._rightLayers.forEach(function (layer) {
-      if (this._map.hasLayer(layer)) {
-        this._rightLayer = layer
-      }
-    }, this)
-    if (prevLeft !== this._leftLayer) {
-      prevLeft && this.fire('leftlayerremove', {layer: prevLeft})
-      this._leftLayer && this.fire('leftlayeradd', {layer: this._leftLayer})
-    }
-    if (prevRight !== this._rightLayer) {
-      prevRight && this.fire('rightlayerremove', {layer: prevRight})
-      this._rightLayer && this.fire('rightlayeradd', {layer: this._rightLayer})
+
+    // Build list of shared layers.
+    this._bothLayers = []
+    // uniqueLeftLayers = []
+    if (this._leftLayers) {
+      this._leftLayers.forEach((layer, index) => {
+        if (layer) {
+          if (this._rightLayers) {
+            this._rightLayers.forEach(rightLayer => {
+              if (rightLayer && layer._leaflet_id == rightLayer._leaflet_id) {
+                this._bothLayers.push(layer)
+              }
+            })
+          }
+        }
+      })
     }
     this._updateClip()
   },
