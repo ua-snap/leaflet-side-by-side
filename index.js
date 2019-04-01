@@ -107,12 +107,16 @@ L.Control.SideBySide = L.Control.extend({
     if (!this._map) {
       return this
     }
-    this.leftLayers.forEach(function(layer) {
-      removeClip(layer)
-    })
-    this.rightLayers.forEach(function(layer) {
-      removeClip(layer)
-    })
+    if(this.leftLayers) {
+      this.leftLayers.forEach(function(layer) {
+        removeClip(layer)
+      })
+    }
+    if(this.rightLayers) {
+      this.rightLayers.forEach(function(layer) {
+        removeClip(layer)
+      })
+    }
     this._removeEvents()
     L.DomUtil.remove(this._container)
 
