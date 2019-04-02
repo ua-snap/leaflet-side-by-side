@@ -108,13 +108,13 @@ L.Control.SideBySide = L.Control.extend({
     if (!this._map) {
       return this
     }
-    if(this.leftLayers) {
-      this.leftLayers.forEach(function(layer) {
+    if(this._leftLayers) {
+      this._leftLayers.forEach(function(layer) {
         removeClip(layer)
       })
     }
-    if(this.rightLayers) {
-      this.rightLayers.forEach(function(layer) {
+    if(this._rightLayers) {
+      this._rightLayers.forEach(function(layer) {
         removeClip(layer)
       })
     }
