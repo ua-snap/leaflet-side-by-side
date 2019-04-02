@@ -50,7 +50,8 @@ function asArray (arg) {
 function noop () {}
 
 function removeClip (layer) {
-  clipContainer(layer, '')
+  var map = this._map
+  clipContainer(layer, 'auto')
 }
 
 var clipContainer = function(layer, clip) {
