@@ -167,7 +167,6 @@ L.Control.SideBySide = L.Control.extend({
 
     // Build list of shared layers.
     this._bothLayers = []
-    // uniqueLeftLayers = []
     if (this._leftLayers) {
       this._leftLayers.forEach(function(layer, index) {
         if (layer) {
