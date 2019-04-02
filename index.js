@@ -70,8 +70,8 @@ L.Control.SideBySide = L.Control.extend({
   },
 
   initialize: function (leftLayers, rightLayers, options) {
-    this.setLeftLayers(leftLayers)
-    this.setRightLayers(rightLayers)
+    this.setLeftLayers(leftLayers || [])
+    this.setRightLayers(rightLayers || [])
     L.setOptions(this, options)
   },
 
@@ -155,7 +155,13 @@ L.Control.SideBySide = L.Control.extend({
     this._rightLayers.forEach(function(layer) {
       clipContainer(layer, clipRight)
     })
-    this._bothLayers.forEach(function(layer) {
+    l = this._leftLayers
+    r = this._rightLayers
+
+    both = l.filter(function(n) {
+      return r.indexOf(n) !== -1;
+    });
+    both.forEach(function(layer) {
       removeClip(layer)
     })
   },
@@ -163,22 +169,6 @@ L.Control.SideBySide = L.Control.extend({
   _updateLayers: function () {
     if (!this._map) {
       return this
-    }
-
-    // Build list of shared layers.
-    this._bothLayers = []
-    if (this._leftLayers) {
-      this._leftLayers.forEach(function(layer, index) {
-        if (layer) {
-          if (this._rightLayers) {
-            this._rightLayers.forEach(function(rightLayer) {
-              if (rightLayer && layer._leaflet_id == rightLayer._leaflet_id) {
-                this._bothLayers.push(layer)
-              }
-            })
-          }
-        }
-      })
     }
     this._updateClip()
   },
